@@ -1,0 +1,43 @@
+git_private_url:  ssh://git@escmstash.1dc.com:7999/pcfsp/test-app.git
+git_branch: master
+git_repo_name: test-app
+git_private_key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEogIBAAKCAQEA7H0fvAEjywEgFsBWW8o2y/Mc/HCxvXRVPTdvqW8fmGBdP9v4
+  xfj4OucsyGYtv8TFjbvV0D0vHGRgKIDBUKjDwNzD+RSSMiDM3rnGGynkQr8N0k5T
+  DvS0aWY9EEQTNWJlILJ2Qv+TB17ZxeidmLZC5DLu3FrsVmscWn+RRHxbvv9EQsSP
+  buTkcgZGk8Unh/LcWS56E4xY+0WrDGAXXIDt0O61XBxY70iCyRhW/aTYDaOD+kFU
+  +MXVXxikgtPsrHPE6HwvAxHVs9KYA8D3KSlftC5iSiJ2Ulu0eBCXkx/7buAsdLvW
+  oEUoCRduDVEPWrWKWA8eE5DM+QKc8K58DrnO7QIBIwKCAQAGwb8UAAhWQdxYa+U1
+  0pPZ8QDUAzhHPdaMuHDnlXXuaSc8Vr33Bx0I/0psIC0xXWS66BwNQ5Ohubmawdmj
+  OAWXy8sVvsJZNCMcTnNf3KAfKge1jTWStojPz7iaEJLVo7m/GwqxdQQzaRwqOdid
+  9pQyZ9rwWl6GIFFEagt2/D0itsf/w8j6/5eoloIq2A+YR/UJCSqLjVomQJfww0S9
+  dxv1ZWGyL3F1n0W8EOELphb0DQuxaST3/gV29YoWxP0dcvkFDXXRnQRbIeqNhUOr
+  EVOp8zQ/KpXp0B/igxA2onrb4MOiguSPNelWG9r50rq2fE8wJfFF4JzKnbPGIqLR
+  EVH/AoGBAPz/8850Ry9ylGOXxfxBXWgCddZ11y1y6zYY3c+DDL6Ze7bliKPcWm/q
+  Dr0f4dHgYcs2gyHBk46sD7CiJYIkb7ih/HvQ21qP4hykeI6RDitR13ZvNjc8Rue7
+  69DTAq/mbZ9FTZ+RomRhCkNBAVP2hXRnNYcg0g90DwmShgeKJ5H/AoGBAO9LDEap
+  q/jy3hcgdQl0vvQad9KJYdhNha8Iz+HyK1yqlqMaFzH+J4ooutVGDeLPeR+CXiVP
+  d4dvdxLDv8+BTACVqJeJvuKuTWoGECg0vMQmFsc4GcAeoHDEOY9H5n94t833iPd6
+  Q9ziPjqkgDRxMUJbqZplCU3RY/9HbDHvNAcTAoGBAOdQaeFUXldEL+YHG2pKZAdS
+  tOFVzAxLz7xugafIRiqa9MR6Focv3agmc+AdJjw63RGQ7Oupq3sg+Gb6pfNUg2b6
+  gHEz+8CDjOb8xf6wgfu4inrpViPfVsU+GW53x/FHtK7gRvhKoxnyUoah1VQUl0Xa
+  tJjNjNrtxJsJnxzWFYzLAoGAUgsaJtsWY/t/WGLmTGKKnNXf8Gmd48LOv6s/9bId
+  fttm2NW+z0/TCswizMePu3pVaeON/inf1qnfrqmDl5oLbeorLKRBckpjr1KJMls5
+  Z9KLd4Dy4sisCWfZOHBsSPYwY9/XMEctNcnpczEWA1oCQqMVlAViRpDvFbIWd4U2
+  aNMCgYEA9ifrXdcUjmkUICI4ajKtd2tjMbz1PhqzQtRbdBqMbuzZbteuvd4yGtHw
+  L8Z835bOMevIkRC6Ei0M8+crkScaDYTN6W+B7GDtDnu4JIZpIcpcuEfpcgdINIZX
+  IaA4vGHv74tiXDsa2iwNRwG1a3jAvwrOmTcjx9pe9bPf5LDS+AY=
+  -----END RSA PRIVATE KEY-----
+
+cf_username: f4zmlx9
+cf_password: M@nh12345
+cf_organization: USA.MRCH.APP.UCOMM
+cf_space: Gorle_temp
+cf_api_host: api.system.us-oma1-np2.1dc.com
+cf_domain_name: apps.us-oma1-np2.1dc.com
+cf_app_name: test-app
+cf_manifest_path: manifest.yml
+cf_profile:  -cat
+target_deployment_job_name: deploy_to_cat
+concourse_serial_groups: cat

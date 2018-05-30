@@ -1,0 +1,100 @@
+resources:
+  - name: repo-integration
+    type: git
+    source:
+      uri: ssh://git@escmstash.1dc.com:7999/UC/ucom-tokenization-service.git
+      branch: integration
+      private_key: {{git_private_key}}
+
+############################################################
+# Jobs
+############################################################
+jobs:
+  - name: deploy_to_prod
+    serial: true
+    serial_groups: [prod]
+    plan:
+      - get: integration
+        resource: repo-integration
+        trigger: false
+      - task: fetch-release
+        input_mapping: { repo: integration }
+        file: integration/uComTokenizationService/ci/tasks/fetch-current-release.yml
+        params:
+          GROUP: com.fdc.ucom
+          ARTIFACT: ucom-tokenization-services
+          GIT_PRIV_KEY: {{git_private_key}}
+          uri: ssh://git@escmstash.1dc.com:7999/UC/ucom-tokenization-service.git
+      - task: deploy-artifact
+        input_mapping: { repo: integration }
+        file: integration/uComTokenizationService/ci/tasks/upload-apps-task.yml
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: api.system.us-oma1-ip01.1dc.com
+          CF_DOMAIN_NAME: apps.us-oma1-ip01.1dc.com
+          CF_ORGANIZATION: USA.MRCH.APP.UCOMM
+          CF_SPACE: prod
+          APP_NAME: ucom-tokenization-services
+          CF_PROFILE:
+          CF_MANIFEST_PATH: repo/uComTokenizationService/cf-manifests/manifest-oma-prod.yml
+
+  - name: route_traffic
+    plan:
+      - get: integration
+        resource: repo-integration
+        passed:
+          - deploy_to_prod
+        trigger: false
+      - task: route-new-app
+        file: integration/uComTokenizationService/ci/tasks/route-traffic.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: api.system.us-oma1-ip01.1dc.com
+          CF_DOMAIN_NAME: apps.us-oma1-ip01.1dc.com
+          CF_ORGANIZATION: USA.MRCH.APP.UCOMM
+          CF_SPACE: prod
+          APP_NAME: ucom-tokenization-services
+          CF_PROFILE:
+
+  - name: un-route_traffic
+    plan:
+      - get: integration
+        resource: repo-integration
+        passed:
+          - deploy_to_prod
+          - route_traffic
+        trigger: false
+      - task: un-route-previous-app
+        file: integration/uComTokenizationService/ci/tasks/un-route.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: api.system.us-oma1-ip01.1dc.com
+          CF_DOMAIN_NAME: apps.us-oma1-ip01.1dc.com
+          CF_ORGANIZATION: USA.MRCH.APP.UCOMM
+          CF_SPACE: prod
+          APP_NAME: ucom-tokenization-services
+          CF_PROFILE:
+
+  - name: recycle-app
+    plan:
+      - get: integration
+        resource: repo-integration
+        trigger: false
+      - task: recycle-X-with-Y
+        file: integration/uComTokenizationService/ci/tasks/recycle.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: api.system.us-oma1-ip01.1dc.com
+          CF_DOMAIN_NAME: apps.us-oma1-ip01.1dc.com
+          CF_ORGANIZATION: USA.MRCH.APP.UCOMM
+          CF_SPACE: prod
+          APP_NAME: ucom-tokenization-services
+          CF_PROFILE:
+

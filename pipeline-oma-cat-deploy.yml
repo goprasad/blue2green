@@ -1,0 +1,100 @@
+resources:
+  - name: {{git_repo_name}}
+    type: git
+    source:
+      uri: {{git_private_url}}
+      branch: {{git_branch}}
+      private_key: {{git_private_key}}
+
+
+############################################################
+# Jobs
+############################################################
+jobs:
+  - name: {{target_deployment_job_name}}
+    serial: true
+    serial_groups: [cat]
+    plan:
+      - get: integration
+        resource: {{git_repo_name}}
+        trigger: false
+#      - task: fetch-release
+#        input_mapping: { repo: integration }
+#        file: integration/uComTokenizationService/ci/tasks/fetch-current-release.yml
+#        params:
+#          GROUP: com.fdc.ucom
+#          ARTIFACT: {{cf_app_name}}
+#          GIT_PRIV_KEY: {{git_private_key}}
+#          uri: ssh://git@escmstash.1dc.com:7999/UC/ucom-tokenization-service.git
+      - task: deploy-artifact
+        input_mapping: { repo: integration }
+        file: integration/blue2green/upload-apps-task.yml
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: {{cf_api_host}}
+          CF_DOMAIN_NAME: {{cf_domain_name}}
+          CF_ORGANIZATION: {{cf_organization}}
+          CF_SPACE: {{cf_space}}
+          APP_NAME: {{cf_app_name}}
+          CF_PROFILE: {{cf_profile}}
+          CF_MANIFEST_PATH: repo/{{cf_manifest_path}}
+
+  - name: route_traffic
+    plan:
+      - get: integration
+        resource: {{git_repo_name}}
+        passed:
+          - {{target_deployment_job_name}}
+        trigger: false
+      - task: route-new-app
+        file: integration/blue2green/route-traffic.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: {{cf_api_host}}
+          CF_DOMAIN_NAME: {{cf_domain_name}}
+          CF_ORGANIZATION: {{cf_organization}}
+          CF_SPACE: {{cf_space}}
+          APP_NAME: {{cf_app_name}}
+          CF_PROFILE: {{cf_profile}}
+
+  - name: un-route_traffic
+    plan:
+      - get: integration
+        resource: {{git_repo_name}}
+        passed:
+          - {{target_deployment_job_name}}
+          - route_traffic
+        trigger: false
+      - task: un-route-previous-app
+        file: integration/blue2green/un-route.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: {{cf_api_host}}
+          CF_DOMAIN_NAME: {{cf_domain_name}}
+          CF_ORGANIZATION: {{cf_organization}}
+          CF_SPACE: {{cf_space}}
+          APP_NAME: {{cf_app_name}}
+          CF_PROFILE: {{cf_profile}}
+
+  - name: recycle-app
+    plan:
+      - get: integration
+        resource: {{git_repo_name}}
+        trigger: false
+      - task: recycle-X-with-Y
+        file: integration/blue2green/recycle.yml
+        input_mapping: { repo: integration }
+        params:
+          CF_USER: {{cf_username}}
+          CF_PASSWORD: {{cf_password}}
+          CF_LOGIN_URL: {{cf_api_host}}
+          CF_DOMAIN_NAME: {{cf_domain_name}}
+          CF_ORGANIZATION: {{cf_organization}}
+          CF_SPACE: {{cf_space}}
+          APP_NAME: {{cf_app_name}}
+          CF_PROFILE: {{cf_profile}}
